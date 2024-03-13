@@ -198,22 +198,22 @@ void write_superblock(int fd) {
 
 	// TODO It's all yours
 	// TODO finish the superblock number setting
-	superblock.s_inodes_count = 128;
+	superblock.s_inodes_count = NUM_INODES;
 	superblock.s_blocks_count = NUM_BLOCKS;
 	superblock.s_r_blocks_count = 0; //NUM_FREE_BLOCKS?
 	superblock.s_free_blocks_count = NUM_FREE_BLOCKS;
 	superblock.s_free_inodes_count = NUM_FREE_INODES;
 	superblock.s_first_data_block = 1; /* First Data Block */
-	superblock.s_log_block_size = 1024;					/* 1024 */
-	superblock.s_log_frag_size = 1024;						/* 1024 */
+	superblock.s_log_block_size = BLOCK_SIZE;					/* 1024 */
+	superblock.s_log_frag_size = BLOCK_SIZE;						/* 1024 */
 	//???
-	superblock.s_blocks_per_group = 8192;
+	superblock.s_blocks_per_group = NUM_BLOCKS;
 	//???
-	superblock.s_frags_per_group = 8192;
+	superblock.s_frags_per_group = NUM_BLOCKS;
 	//???
-	superblock.s_inodes_per_group = 128;
+	superblock.s_inodes_per_group = NUM_INODES;
 	//??? n/a in spec
-	superblock.s_mtime = current_time;	/* Mount time */
+	superblock.s_mtime = 0;	/* Mount time */
 	superblock.s_wtime = current_time;	/* Write time */
 	//??? if s_mtime is greater than last_mtime increment and set last_mtime to s_mtime
 	superblock.s_mnt_count         = 0; /* Number of times mounted so far */
