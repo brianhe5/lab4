@@ -451,7 +451,7 @@ void write_inode_table(int fd) {
 	hello_world_inode.i_size = 12;
 	hello_world_inode.i_atime = current_time;
 	hello_world_inode.i_ctime = current_time;
-	// hello_world_inode.i_mtime = current_time;
+	hello_world_inode.i_mtime = current_time;
 	hello_world_inode.i_dtime = 0;
 	hello_world_inode.i_gid = 1000;
 	hello_world_inode.i_links_count = 1;
@@ -469,13 +469,11 @@ void write_inode_table(int fd) {
 	hello_inode.i_size = 11;
 	hello_inode.i_atime = current_time;
 	hello_inode.i_ctime = current_time;
-	// hello_inode.i_mtime = current_time;
+	hello_inode.i_mtime = current_time;
 	hello_inode.i_dtime = 0;
 	hello_inode.i_gid = 1000;
 	hello_inode.i_links_count = 1;
-	hello_inode.i_blocks = 0;
-	//???
-	// hello_inode.i_block[0] = LAST_BLOCK;
+	hello_inode.i_blocks = 0;;
 	memcpy(&(hello_inode.i_block), "hello-world", 11);
 	write_inode(fd, HELLO_INO, &hello_inode);
 
@@ -575,7 +573,7 @@ void write_hello_world_file_block(int fd)
 		errno_exit("lseek");
 	}
 
-	int check = write(fd, "hello world\n", 12);
+	int check = write(fd, "Hello world\n", 12);
 	if (check != 12) {
 		errno_exit("write");
 	}
