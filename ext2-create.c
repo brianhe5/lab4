@@ -218,7 +218,7 @@ void write_superblock(int fd) {
 	//??? if s_mtime is greater than last_mtime increment and set last_mtime to s_mtime
 	superblock.s_mnt_count         = 0; /* Number of times mounted so far */
 	//??? or 65535
-	superblock.s_max_mnt_count     = 32767; /* Make this unlimited */
+	superblock.s_max_mnt_count     = -1; /* Make this unlimited */
 	superblock.s_magic = EXT2_SUPER_MAGIC; /* ext2 Signature */
 	superblock.s_state             = 1; /* File system is clean */
 	superblock.s_errors            = 1; /* Ignore the error (continue on) */
@@ -289,29 +289,27 @@ void write_block_bitmap(int fd)
 	}
 
 	// TODO It's all yours
-	u8 block_bitmap[BLOCK_SIZE];
+	u8 map_value[BLOCK_SIZE];
 	for (int i = 0; i < 1024; i++)
 	{
 		if (i == 2)
 		{
-			block_bitmap[i] = 0b01111111;
+			map_value[i] = 0b01111111;
 		}
 		else if (i == 127)
 		{
-			block_bitmap[i] = 0b10000000;
+			map_value[i] = 0b10000000;
 		}
 		else if ( i < 127 && i > 2)
 		{
-			block_bitmap[i] = 0b00000000;
+			map_value[i] = 0b00000000;
 		}
 		else
 		{
-			block_bitmap[i] = 0b11111111;
+			map_value[i] = 0b11111111;
 
 		}
 	}
-	u8 map_value[BLOCK_SIZE];
-
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
 		errno_exit("write");
@@ -328,25 +326,23 @@ void write_inode_bitmap(int fd)
 	//inode numbers start from 0 i = 0 == inode 1, so it would be inode 14 to 129
 	// still 8192 bits
 	// TODO It's all yours
-	u8 inode_bitmap[BLOCK_SIZE];
+
+	u8 map_value[BLOCK_SIZE];
 	for (int i = 0; i < 1024; i++)
 	{
 		if (i == 1)
 		{
-			inode_bitmap[i] = 0b00011111;
+			map_value[i] = 0b00011111;
 		}
 		else if (i > 1 && i < 16)
 		{
-			inode_bitmap[i] = 0b00000000;
+			map_value[i] = 0b00000000;
 		}
 		else
 		{
-			inode_bitmap[i] = 0b11111111;
+			map_value[i] = 0b11111111;
 		}
 	}
-
-	u8 map_value[BLOCK_SIZE];
-
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
 		errno_exit("write");
