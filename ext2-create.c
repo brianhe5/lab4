@@ -204,12 +204,12 @@ void write_superblock(int fd) {
 	superblock.s_free_blocks_count = NUM_FREE_BLOCKS;
 	superblock.s_free_inodes_count = NUM_FREE_INODES;
 	superblock.s_first_data_block = 1; /* First Data Block */
-	superblock.s_log_block_size = BLOCK_SIZE;					/* 1024 */
-	superblock.s_log_frag_size = BLOCK_SIZE;						/* 1024 */
+	superblock.s_log_block_size = 0;					/* 1024 */
+	superblock.s_log_frag_size = 0;						/* 1024 */
 	//???
-	superblock.s_blocks_per_group = NUM_BLOCKS;
+	superblock.s_blocks_per_group = 8 * BLOCK_SIZE;
 	//???
-	superblock.s_frags_per_group = NUM_BLOCKS;
+	superblock.s_frags_per_group = 8 * BLOCK_SIZE;
 	//???
 	superblock.s_inodes_per_group = NUM_INODES;
 	//??? n/a in spec
@@ -218,7 +218,7 @@ void write_superblock(int fd) {
 	//??? if s_mtime is greater than last_mtime increment and set last_mtime to s_mtime
 	superblock.s_mnt_count         = 0; /* Number of times mounted so far */
 	//??? or 65535
-	superblock.s_max_mnt_count     = -1; /* Make this unlimited */
+	superblock.s_max_mnt_count     = 32767; /* Make this unlimited */
 	superblock.s_magic = EXT2_SUPER_MAGIC; /* ext2 Signature */
 	superblock.s_state             = 1; /* File system is clean */
 	superblock.s_errors            = 1; /* Ignore the error (continue on) */
@@ -452,10 +452,10 @@ void write_inode_table(int fd) {
 	                    | EXT2_S_IRGRP
 	                    | EXT2_S_IROTH;
 	hello_world_inode.i_uid = 1000;
-	hello_world_inode.i_size = 1024;
+	hello_world_inode.i_size = 12;
 	hello_world_inode.i_atime = current_time;
 	hello_world_inode.i_ctime = current_time;
-	hello_world_inode.i_mtime = current_time;
+	// hello_world_inode.i_mtime = current_time;
 	hello_world_inode.i_dtime = 0;
 	hello_world_inode.i_gid = 1000;
 	hello_world_inode.i_links_count = 1;
@@ -470,16 +470,17 @@ void write_inode_table(int fd) {
 	                    | EXT2_S_IRGRP
 	                    | EXT2_S_IROTH;
 	hello_inode.i_uid = 1000;
-	hello_inode.i_size = 1024;
+	hello_inode.i_size = 11;
 	hello_inode.i_atime = current_time;
 	hello_inode.i_ctime = current_time;
-	hello_inode.i_mtime = current_time;
+	// hello_inode.i_mtime = current_time;
 	hello_inode.i_dtime = 0;
 	hello_inode.i_gid = 1000;
 	hello_inode.i_links_count = 1;
-	hello_inode.i_blocks = 2;
+	hello_inode.i_blocks = 0;
 	//???
-	hello_inode.i_block[0] = LAST_BLOCK;
+	// hello_inode.i_block[0] = LAST_BLOCK;
+	memcpy(&(hello_inode.i_block), "hello-world", 11);
 	write_inode(fd, HELLO_INO, &hello_inode);
 
 }
@@ -579,7 +580,7 @@ void write_hello_world_file_block(int fd)
 	}
 
 	int check = write(fd, "hello world\n", 12);
-	if (check == -1) {
+	if (check != 12) {
 		errno_exit("write");
 	}
 
