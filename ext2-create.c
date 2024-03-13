@@ -578,7 +578,7 @@ void write_hello_world_file_block(int fd)
 		errno_exit("lseek");
 	}
 
-	int check = write("hello world\n", fd, 12);
+	int check = write(fd, "hello world\n", 12);
 	if (check == -1) {
 		errno_exit("write");
 	}
